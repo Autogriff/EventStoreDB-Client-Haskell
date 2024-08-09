@@ -14,6 +14,7 @@ module Database.EventStore.Internal.Manager.Operation.Registry where
 import qualified Data.HashMap.Strict as HashMap
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData, deepseq)
 import Data.ProtocolBuffers
 import Data.Serialize
 
@@ -386,8 +387,8 @@ registryAbort reg
          -> mailboxFail (waitingMailbox w) Aborted
 
 --------------------------------------------------------------------------------
-maybeDecodeMessage :: Decode a => ByteString -> Maybe a
+maybeDecodeMessage :: (NFData a, Decode a) => ByteString -> Maybe a
 maybeDecodeMessage bytes =
     case runGet decodeMessage bytes of
-        Right a -> Just a
+        Right a -> a `deepseq` Just a
         _       -> Nothing

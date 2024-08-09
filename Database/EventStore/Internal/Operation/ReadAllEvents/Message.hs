@@ -17,6 +17,7 @@ module Database.EventStore.Internal.Operation.ReadAllEvents.Message where
 import Data.Int
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData)
 import Data.ProtocolBuffers
 
 --------------------------------------------------------------------------------
@@ -63,7 +64,10 @@ data Result
     | NOT_MODIFIED
     | ERROR
     | ACCESS_DENIED
-    deriving (Eq, Enum, Show)
+    deriving (Eq, Enum, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData Result
 
 --------------------------------------------------------------------------------
 -- | Batch read on $all stream response.
@@ -81,3 +85,4 @@ data Response
 
 --------------------------------------------------------------------------------
 instance Decode Response
+instance NFData Response

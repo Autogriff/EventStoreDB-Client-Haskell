@@ -12,6 +12,7 @@
 module Database.EventStore.Internal.Subscription.Command where
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData, deepseq)
 import Data.ProtocolBuffers
 import Data.Serialize
 
@@ -106,8 +107,8 @@ decodeServerMessage pkg = fromMaybe err go
                 | otherwise -> Nothing
 
 --------------------------------------------------------------------------------
-maybeDecodeMessage :: Decode a => ByteString -> Maybe a
+maybeDecodeMessage :: (NFData a, Decode a) => ByteString -> Maybe a
 maybeDecodeMessage bytes =
     case runGet decodeMessage bytes of
-        Right a -> Just a
+        Right a -> a `deepseq` Just a
         _       -> Nothing

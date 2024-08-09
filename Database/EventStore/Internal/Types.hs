@@ -22,6 +22,7 @@ module Database.EventStore.Internal.Types where
 
 --------------------------------------------------------------------------------
 import Prelude (String)
+import Control.DeepSeq (NFData)
 import Data.Maybe
 import Data.Monoid (Endo(..))
 import Foreign.C.Types (CTime(..))
@@ -335,6 +336,7 @@ data EventRecord
 --------------------------------------------------------------------------------
 instance Decode EventRecord
 instance Encode EventRecord
+instance NFData EventRecord
 
 --------------------------------------------------------------------------------
 -- | Represents a serialized event representiong either an event or a link
@@ -349,13 +351,17 @@ data ResolvedIndexedEvent
 --------------------------------------------------------------------------------
 instance Decode ResolvedIndexedEvent
 instance Encode ResolvedIndexedEvent
+instance NFData ResolvedIndexedEvent
 
 --------------------------------------------------------------------------------
 data NotHandledReason
     = N_NotReady
     | N_TooBusy
     | N_NotMaster
-    deriving (Enum, Eq, Show)
+    deriving (Enum, Eq, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData NotHandledReason
 
 --------------------------------------------------------------------------------
 data MasterInfoBuf
@@ -372,6 +378,7 @@ data MasterInfoBuf
 instance Decode MasterInfoBuf
 -- For testing purpose.
 instance Encode MasterInfoBuf
+instance NFData MasterInfoBuf
 
 --------------------------------------------------------------------------------
 data MasterInfo
@@ -425,6 +432,7 @@ data NotHandledBuf
 instance Decode NotHandledBuf
 -- Testing purpose only
 instance Encode NotHandledBuf
+instance NFData NotHandledBuf
 
 --------------------------------------------------------------------------------
 -- | Represents a serialized event sent by the server in a subscription context.
@@ -439,6 +447,7 @@ data ResolvedEventBuf
 
 --------------------------------------------------------------------------------
 instance Decode ResolvedEventBuf
+instance NFData ResolvedEventBuf
 
 --------------------------------------------------------------------------------
 -- Result

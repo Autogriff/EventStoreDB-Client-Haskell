@@ -20,6 +20,7 @@
 module Database.EventStore.Internal.Operation.ReadEvent.Message where
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData)
 import Data.Int
 
 --------------------------------------------------------------------------------
@@ -63,7 +64,10 @@ data Result
     | STREAM_DELETED
     | ERROR
     | ACCESS_DENIED
-    deriving (Eq, Enum, Show)
+    deriving (Eq, Enum, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData Result
 
 --------------------------------------------------------------------------------
 -- | Read event on a regular stream response.
@@ -78,3 +82,4 @@ data Response
 --------------------------------------------------------------------------------
 instance Decode Response
 instance Encode Response
+instance NFData Response

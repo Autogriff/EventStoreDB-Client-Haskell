@@ -14,6 +14,7 @@
 module Database.EventStore.Internal.Operation.Transaction.Message where
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData)
 import Data.Int
 
 --------------------------------------------------------------------------------
@@ -59,6 +60,7 @@ data Started =
 
 --------------------------------------------------------------------------------
 instance Decode Started
+instance NFData Started
 
 --------------------------------------------------------------------------------
 -- | Write transactional events request.
@@ -95,6 +97,7 @@ data Written =
 
 --------------------------------------------------------------------------------
 instance Decode Written
+instance NFData Written
 
 --------------------------------------------------------------------------------
 -- | Commit transaction request.
@@ -133,3 +136,4 @@ data Committed =
 
 --------------------------------------------------------------------------------
 instance Decode Committed
+instance NFData Committed

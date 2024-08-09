@@ -14,6 +14,7 @@
 module Database.EventStore.Internal.Operation.WriteEvents.Message where
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData)
 import Data.Int
 
 --------------------------------------------------------------------------------
@@ -68,3 +69,4 @@ data Response
 
 --------------------------------------------------------------------------------
 instance Decode Response
+instance NFData Response

@@ -38,6 +38,7 @@ dependencies:
   - safe
   - streaming
   - vector
+  - deepseq
 
 extra-source-files:
   - README.md

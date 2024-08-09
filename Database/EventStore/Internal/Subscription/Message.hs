@@ -4,7 +4,7 @@
 #if __GLASGOW_HASKELL__ < 800
 {-# OPTIONS_GHC -fcontext-stack=26 #-}
 #else
-{-# OPTIONS_GHC -freduction-depth=26 #-}
+-- {-# OPTIONS_GHC -freduction-depth=26 #-}
 #endif
 --------------------------------------------------------------------------------
 -- |
@@ -20,6 +20,7 @@
 module Database.EventStore.Internal.Subscription.Message where
 
 --------------------------------------------------------------------------------
+import Control.DeepSeq (NFData)
 import Data.Int
 
 --------------------------------------------------------------------------------
@@ -62,6 +63,7 @@ data SubscriptionConfirmation
 
 --------------------------------------------------------------------------------
 instance Decode SubscriptionConfirmation
+instance NFData SubscriptionConfirmation
 
 --------------------------------------------------------------------------------
 -- | Serialized event sent by the server when a new event has been appended to a
@@ -73,6 +75,7 @@ data StreamEventAppeared
 
 --------------------------------------------------------------------------------
 instance Decode StreamEventAppeared
+instance NFData StreamEventAppeared
 
 --------------------------------------------------------------------------------
 -- | Represents the reason subscription drop happened.
@@ -82,7 +85,10 @@ data DropReason
     | D_NotFound
     | D_PersistentSubscriptionDeleted
     | D_SubscriberMaxCountReached
-    deriving (Enum, Eq, Show)
+    deriving (Enum, Eq, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData DropReason
 
 --------------------------------------------------------------------------------
 -- | A message sent by the server when a subscription has been dropped.
@@ -93,6 +99,7 @@ data SubscriptionDropped
 
 --------------------------------------------------------------------------------
 instance Decode SubscriptionDropped
+instance NFData SubscriptionDropped
 
 --------------------------------------------------------------------------------
 -- | A message sent to the server to indicate the user asked to end a
@@ -170,7 +177,10 @@ data CreatePersistentSubscriptionResult
     | CPS_AlreadyExists
     | CPS_Fail
     | CPS_AccessDenied
-    deriving (Enum, Eq, Show)
+    deriving (Enum, Eq, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData CreatePersistentSubscriptionResult
 
 --------------------------------------------------------------------------------
 -- | Create persistent subscription response.
@@ -182,6 +192,7 @@ data CreatePersistentSubscriptionCompleted =
 
 --------------------------------------------------------------------------------
 instance Decode CreatePersistentSubscriptionCompleted
+instance NFData CreatePersistentSubscriptionCompleted
 
 --------------------------------------------------------------------------------
 -- | Delete persistent subscription request.
@@ -210,7 +221,10 @@ data DeletePersistentSubscriptionResult
     | DPS_DoesNotExist
     | DPS_Fail
     | DPS_AccessDenied
-    deriving (Enum, Eq, Show)
+    deriving (Enum, Eq, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData DeletePersistentSubscriptionResult
 
 --------------------------------------------------------------------------------
 -- | Delete persistent subscription response.
@@ -222,6 +236,7 @@ data DeletePersistentSubscriptionCompleted =
 
 --------------------------------------------------------------------------------
 instance Decode DeletePersistentSubscriptionCompleted
+instance NFData DeletePersistentSubscriptionCompleted
 
 --------------------------------------------------------------------------------
 -- | Update persistent subscription request.
@@ -291,7 +306,10 @@ data UpdatePersistentSubscriptionResult
     | UPS_DoesNotExist
     | UPS_Fail
     | UPS_AccessDenied
-    deriving (Enum, Eq, Show)
+    deriving (Enum, Eq, Generic, Show)
+
+--------------------------------------------------------------------------------
+instance NFData UpdatePersistentSubscriptionResult
 
 --------------------------------------------------------------------------------
 -- | Update persistent subscription response.
@@ -303,6 +321,7 @@ data UpdatePersistentSubscriptionCompleted =
 
 --------------------------------------------------------------------------------
 instance Decode UpdatePersistentSubscriptionCompleted
+instance NFData UpdatePersistentSubscriptionCompleted
 
 --------------------------------------------------------------------------------
 -- | Connect to a persistent subscription request.
@@ -400,6 +419,7 @@ data PersistentSubscriptionConfirmation =
 
 --------------------------------------------------------------------------------
 instance Decode PersistentSubscriptionConfirmation
+instance NFData PersistentSubscriptionConfirmation
 
 --------------------------------------------------------------------------------
 -- | Avalaible event sent by the server in the context of a persistent
@@ -411,3 +431,4 @@ data PersistentSubscriptionStreamEventAppeared =
 
 --------------------------------------------------------------------------------
 instance Decode PersistentSubscriptionStreamEventAppeared
+instance NFData PersistentSubscriptionStreamEventAppeared

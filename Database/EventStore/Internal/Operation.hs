@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -15,6 +16,7 @@ module Database.EventStore.Internal.Operation where
 
 --------------------------------------------------------------------------------
 import Prelude (String)
+import Control.DeepSeq (NFData, deepseq)
 import Data.ProtocolBuffers
 import Data.Serialize (runPut, runGet)
 
@@ -42,7 +44,7 @@ mailboxRead (Mailbox chan) = readChan chan
 
 --------------------------------------------------------------------------------
 mailboxReadDecoded
-  :: (MonadBase IO m, Decode resp)
+  :: (MonadBase IO m, NFData resp, Decode resp)
   => Mailbox
   -> m (Either OperationError resp)
 mailboxReadDecoded (Mailbox chan)
@@ -75,11 +77,11 @@ createPkg cmd creds msg
 --------------------------------------------------------------------------------
 -- FIXME We could use Bifunctor but can't I am not sure it covers all the GHC
 -- we support at that time.
-decodePkg :: Decode msg => Package -> Either OperationError msg
+decodePkg :: (NFData msg, Decode msg) => Package -> Either OperationError msg
 decodePkg pkg
   = case runGet decodeMessage (packageData pkg) of
       Left e -> Left $ ProtobufDecodingError e
-      Right resp -> Right resp
+      Right resp -> resp `deepseq` Right resp
 
 --------------------------------------------------------------------------------
 -- | Operation exception that can occurs on an operation response.
@@ -118,8 +120,11 @@ data OpResult
     | OP_STREAM_DELETED
     | OP_INVALID_TRANSACTION
     | OP_ACCESS_DENIED
-    deriving (Eq, Enum, Show)
+    deriving (Eq, Enum, Generic, Show)
 
+--------------------------------------------------------------------------------
+instance NFData OpResult
+ 
 --------------------------------------------------------------------------------
 data Lifetime
   = OneTime
